@@ -409,6 +409,12 @@ def _todb_dbapi_connection(table, connection, tablename, schema=None,
     flds = list(map(text_type, hdr))
     colnames = [_quote(n) for n in flds]
     debug('column names: %r', colnames)
+    
+    # accommodate for Oracle
+    if connection.__class__.__module__ == 'cx_Oracle':
+        tablename = tablename.replace('"', '')
+        it = list(it)
+        colnames = flds
 
     # determine paramstyle and build placeholders string
     placeholders = _placeholders(connection, colnames)
